@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Restaurant</title>
+  </head>
+  <body>
+    <form action="/restaurants" method="post">
+      <div>
+        <label for="name">Restaurant Name</label>
+        <input type="text" id="name" name="restaurant[name]" />
+      </div>
+      <div>
+        <label for="name">Restaurant Location</label>
+        <input type="text" id="location" name="restaurant[location]" />
+      </div>
+      <div>
+        <label for="name">Restaurant Description</label>
+        <input type="text" id="desctiption" name="restaurant[desctiption]" />
+      </div>
+      <button>Add Restaurant</button>
+    </form>
+    <button><a href="/restaurants">All Restaurants</a></button>
+  </body>
+</html>

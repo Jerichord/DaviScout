@@ -1,43 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Edit Restaurant</title>
-  </head>
-  <body>
-    <h1>Edit Restaurant</h1>
-    <form action="/restaurants/<%= restaurant._id%>?_method=PUT " method="post">
-      <div>
-        <label for="name">Restaurant Name</label>
-        <input
-          type="text"
-          id="name"
-          name="restaurant[name]"
-          value="<%= restaurant.name %>"
-        />
-      </div>
-      <div>
-        <label for="name">Restaurant Location</label>
-        <input
-          type="text"
-          id="location"
-          name="restaurant[location]"
-          value="<%= restaurant.location %>"
-        />
-      </div>
-      <div>
-        <label for="name">Restaurant Description</label>
-        <input
-          type="text"
-          id="desctiption"
-          name="restaurant[desctiption]"
-          value="<%= restaurant.description %>"
-        />
-      </div>
-      <button>Update Restaurant</button>
-    </form>
-    <a href="/restaurants/<%= restaurant._id %> ">Back to Restaurant</a>
-  </body>
-</html>
+<% layout("layouts/boilerplate") -%>
+<h1>Edit Restaurant</h1>
+<form action="/restaurants/<%= restaurant._id%>?_method=PUT " method="post">
+  <div>
+    <label for="name">Restaurant Name</label>
+    <input
+      type="text"
+      id="name"
+      name="restaurant[name]"
+      value="<%= restaurant.name %>"
+    />
+  </div>
+  <div>
+    <label for="name">Restaurant Location</label>
+    <input
+      type="text"
+      id="location"
+      name="restaurant[location]"
+      value="<%= restaurant.location %>"
+    />
+  </div>
+  <div>
+    <label for="name">Restaurant Description</label>
+    <input
+      type="text"
+      id="desctiption"
+      name="restaurant[desctiption]"
+      value="<%= restaurant.description %>"
+    />
+  </div>
+  <button>Update Restaurant</button>
+</form>
+<a href="/restaurants/<%= restaurant._id %> ">Back to Restaurants</a>

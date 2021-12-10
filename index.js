@@ -1,10 +1,12 @@
 const express = require("express");
 const app = express();
 const path = require("path");
+const ejsMate = require("ejs-mate");
 const mongoose = require("mongoose");
 const Restaurant = require("./models/restaurant");
 const methodOverride = require("method-override");
 
+//connecting to database. You should have a database running locally using mongo called restaurants
 const connectDB = async () => {
   await mongoose.connect("mongodb://localhost:27017/restaurants");
   console.log("connected");
@@ -15,6 +17,8 @@ connectDB().catch((err) => console.log(err));
 //set up template engine to ejs and set directory where ejs is located
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+//app engine using ejs-mate
+app.engine("ejs", ejsMate);
 
 //set up parser for forms
 app.use(express.urlencoded({ extended: true }));

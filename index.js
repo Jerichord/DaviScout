@@ -5,6 +5,8 @@ const ejsMate = require("ejs-mate");
 const mongoose = require("mongoose");
 const Restaurant = require("./models/restaurant");
 const methodOverride = require("method-override");
+const ExpressError = require("./utilities/ExpressError");
+const AsyncCatcher = require("./utilities/AsyncCatcher");
 
 //connecting to database. You should have a database running locally using mongo called restaurants
 const connectDB = async () => {
@@ -13,6 +15,13 @@ const connectDB = async () => {
 };
 
 connectDB().catch((err) => console.log(err));
+
+//async utility to catch errors
+function wrapAsync(fn) {
+  return function (req, res, next) {
+    fn(req, res, next).catch((e) => next(e));
+  };
+}
 
 //set up template engine to ejs and set directory where ejs is located
 app.set("view engine", "ejs");
@@ -37,21 +46,27 @@ app.get("/restaurants/new", (req, res) => {
   res.render("restaurants/new");
 });
 
-app.get("/restaurants/:id", async (req, res) => {
-  const restaurant = await Restaurant.findById(req.params.id);
-  res.render("restaurants/show", { restaurant });
-});
+app.get(
+  "/restaurants/:id",
+  AsyncCatcher(async (req, res) => {
+    const restaurant = await Restaurant.findById(req.params.id);
+    res.render("restaurants/show", { restaurant });
+  })
+);
 
 app.get("/restaurants/:id/edit", async (req, res) => {
   const restaurant = await Restaurant.findById(req.params.id);
   res.render("restaurants/edit", { restaurant });
 });
 
-app.post("/restaurants", async (req, res) => {
-  const restaurant = new Restaurant(req.body.restaurant);
-  await restaurant.save();
-  res.redirect(`/restaurants/${restaurant._id}`);
-});
+app.post(
+  "/restaurants",
+  AsyncCatcher(async (req, res, next) => {
+    const restaurant = new Restaurant(req.body.restaurant);
+    await restaurant.save();
+    res.redirect(`/restaurants/${restaurant._id}`);
+  })
+);
 
 app.put("/restaurants/:id", async (req, res) => {
   const { id } = req.params;
@@ -69,4 +84,10 @@ app.delete("/restaurants/:id", async (req, res) => {
 
 app.listen(3000, () => {
   console.log(`Example app listening at http://localhost:3000`);
+});
+
+app.use((err, req, res, next) => {
+  const { status = 500, message = "Something went wrong" } = err;
+  res.send("Sorry, we couldn't find that page.");
+  res.status(status).send(message);
 });

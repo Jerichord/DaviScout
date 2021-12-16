@@ -3,10 +3,22 @@
 <div>
   <a href="/restaurants/new">add restaurant</a>
 </div>
-<ul>
-  <%for (let restaurant of restaurants) {%>
-  <li>
-    <a href="/restaurants/<%=restaurant._id%>"><%=restaurant.name %></a>
-  </li>
-  <% } %>
-</ul>
+
+<%for (let restaurant of restaurants) {%>
+<div class="card" mb-3>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">
+          <a href="/restaurants/<%=restaurant._id%>"><%=restaurant.name %></a>
+          <p class="card-text"><%= restaurant.description %></p>
+          <p class="card-text">
+            <small class="text-muted"><%= restaurant.location %></small>
+          </p>
+        </h5>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="mb-4"></div>
+<% } %>

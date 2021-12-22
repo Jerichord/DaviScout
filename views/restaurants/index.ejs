@@ -1,7 +1,9 @@
 <% layout("layouts/boilerplate") -%>
-<h1>Restaurants Page!</h1>
-<div>
-  <a href="/restaurants/new">add restaurant</a>
+<div class="row">
+  <div class="col-md-10"><h1>Restaurants Page!</h1></div>
+  <div class="col-md-2 text-right mt-2">
+    <a class="btn btn-primary" href="/restaurants/new">add restaurant</a>
+  </div>
 </div>
 
 <%for (let restaurant of restaurants) {%>
@@ -9,13 +11,14 @@
   <div class="row">
     <div class="col-md-8">
       <div class="card-body">
-        <h5 class="card-title">
-          <a href="/restaurants/<%=restaurant._id%>"><%=restaurant.name %></a>
-          <p class="card-text"><%= restaurant.description %></p>
-          <p class="card-text">
-            <small class="text-muted"><%= restaurant.location %></small>
-          </p>
-        </h5>
+        <h5 class="card-title"><%=restaurant.name %></h5>
+        <p class="card-text"><%= restaurant.description %></p>
+        <p class="card-text">
+          <small class="text-muted"><%= restaurant.location %></small>
+        </p>
+        <a class="btn btn-primary" href="/restaurants/<%=restaurant._id%>"
+          >View <%= restaurant.name %>
+        </a>
       </div>
     </div>
   </div>

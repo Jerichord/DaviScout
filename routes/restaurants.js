@@ -34,6 +34,10 @@ router.get(
     const restaurant = await Restaurant.findById(req.params.id).populate(
       "reviews"
     );
+    if (!restaurant) {
+      req.flash("error", "Sorry, cannot find that restaurant!");
+      return res.redirect("/restaurants");
+    }
     res.render("restaurants/show", { restaurant });
   })
 );
@@ -42,6 +46,10 @@ router.get(
   "/:id/edit",
   AsyncCatcher(async (req, res) => {
     const restaurant = await Restaurant.findById(req.params.id);
+    if (!restaurant) {
+      req.flash("error", "Sorry, cannot find that restaurant!");
+      return res.redirect("/restaurants");
+    }
     res.render("restaurants/edit", { restaurant });
   })
 );
@@ -66,6 +74,7 @@ router.put(
     const restaurant = await Restaurant.findByIdAndUpdate(id, {
       ...req.body.restaurant,
     });
+    req.flash("success", "Successfully updated campground!");
     res.redirect(`/restaurants/${restaurant.id}`);
   })
 );
@@ -75,6 +84,7 @@ router.delete(
   AsyncCatcher(async (req, res) => {
     const { id } = req.params;
     await Restaurant.findByIdAndDelete(id);
+    req.flash("success", "Successfully deleted campground!");
     res.redirect("/restaurants");
   })
 );

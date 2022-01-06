@@ -6,9 +6,14 @@ const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const session = require("express-session");
 const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user");
 
-const restaurants = require("./routes/restaurants");
-const reviews = require("./routes/reviews");
+//routes
+const userRoutes = require("./routes/users");
+const restaurantRoutes = require("./routes/restaurants");
+const reviewRoutes = require("./routes/reviews");
 
 //connecting to database. You should have a database running locally using mongo called restaurants
 const connectDB = async () => {
@@ -47,14 +52,25 @@ app.use(session(sessionConfig));
 //flash
 app.use(flash());
 
+//passport for authentication
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
   next();
 });
 
 //router objects
-app.use("/restaurants", restaurants);
-app.use("/restaurants/:id/reviews", reviews);
+app.use("/", userRoutes);
+app.use("/restaurants", restaurantRoutes);
+app.use("/restaurants/:id/reviews", reviewRoutes);
 
 //our routes for our app
 app.get("/", (req, res) => {

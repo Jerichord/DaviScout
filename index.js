@@ -78,7 +78,7 @@ app.get("/", (req, res) => {
 });
 
 app.all("*", (req, res, next) => {
-  next(new ExpressError("Page Not Found", 404));
+  next(new Error("Page Not Found", 404));
 });
 
 app.use((err, req, res, next) => {

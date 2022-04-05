@@ -6,15 +6,20 @@ const Restaurant = require("../models/restaurant");
 
 const { restaurantSchema } = require("../joiSchemas.js");
 
-const validateRestaurant = (req, res, next) => {
-  const { error } = restaurantSchema.validate(req.body);
-  if (error) {
-    const msg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(msg, 400);
-  } else {
-    next();
-  }
-};
+const { isLoggedIn } = require("../middleware");
+
+const { validateRestaurant } = require("../middleware");
+const req = require("express/lib/request");
+
+// const validateRestaurant = (req, res, next) => {
+//   const { error } = restaurantSchema.validate(req.body);
+//   if (error) {
+//     const msg = error.details.map((el) => el.message).join(",");
+//     throw new ExpressError(msg, 400);
+//   } else {
+//     next();
+//   }
+// };
 
 router.get(
   "/",
@@ -24,11 +29,7 @@ router.get(
   })
 );
 
-router.get("/new", (req, res) => {
-  if (!req.isAuthenticated()) {
-    req.flash("error", "Must be signed in!");
-    res.redirect("/login");
-  }
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("restaurants/new");
 });
 
@@ -48,6 +49,7 @@ router.get(
 
 router.get(
   "/:id/edit",
+  isLoggedIn,
   AsyncCatcher(async (req, res) => {
     const restaurant = await Restaurant.findById(req.params.id);
     if (!restaurant) {
@@ -58,8 +60,15 @@ router.get(
   })
 );
 
+router.get("/logout", (re1, res) => {
+  req.logout();
+  req.flash("success", "Successfully logged out.");
+  res.redirect("/restaurants");
+});
+
 router.post(
   "/",
+  isLoggedIn,
   validateRestaurant,
   AsyncCatcher(async (req, res, next) => {
     if (!req.body.restaurant) throw new ExpressError("Invalid Restaurant", 400);
@@ -72,6 +81,7 @@ router.post(
 
 router.put(
   "/:id",
+  isLoggedIn,
   validateRestaurant,
   AsyncCatcher(async (req, res) => {
     const { id } = req.params;
@@ -85,6 +95,7 @@ router.put(
 
 router.delete(
   "/:id",
+  isLoggedIn,
   AsyncCatcher(async (req, res) => {
     const { id } = req.params;
     await Restaurant.findByIdAndDelete(id);

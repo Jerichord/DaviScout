@@ -3,18 +3,34 @@
   <div class="col-md-6">
     <h1><%= restaurant.name %></h1>
     <h2><%= restaurant.location %></h2>
+    <h2>Submitted by <%= restaurant.author.username %></h2>
     <footer>
-      <a href="/restaurants/<%=restaurant._id%>/edit">Edit Restaurant</a>
-      <a href="/restaurants">All Restaurants</a>
+      <a type="button" class="btn btn-primary" href="/restaurants"
+        >All Restaurants</a
+      >
+      <% if(currentUser && restaurant.author.equals(currentUser._id)) {%>
+        <a
+        type="button"
+        class="btn btn-primary"
+        href="/restaurants/<%=restaurant._id%>/edit"
+        >Edit Restaurant</a
+      >
+      <% } %>
+
+      <% if(currentUser && restaurant.author.equals(currentUser._id)) {%>
+
+        <form
+          action="/restaurants/<%= restaurant._id %>?_method=DELETE "
+          method="post"
+        >
+          <button type="button" class="btn btn-danger mt-3">Delete</button>
+        </form>
+      <% } %>
+    </div>
     </footer>
-    <form
-      action="/restaurants/<%= restaurant._id %>?_method=DELETE "
-      method="post"
-    >
-      <button>Delete</button>
-    </form>
-  </div>
+
   <div class="col-md-6">
+    <% if(currentUser) {%> 
     <div class="card text-center offset-4" style="width: 30rem">
       <div class="card-header">Leave a Review</div>
       <form
@@ -34,8 +50,9 @@
             name="review[rating]"
           />
         </div>
-        <div>
-          <label for="body" class="form-label">How was it?</label>
+        <label for="body" class="form-label">How was it?</label>
+        <div class="input-group">
+          
           <textarea
             class="form-control"
             name="review[body]"
@@ -44,11 +61,13 @@
             rows="3"
             required
           ></textarea>
+          <button class="btn btn-sm btn-success offset-10 mb-1">Submit</button>
           <div class="valid-feedback">Looks Good!</div>
           <div class="invalid-feedback">Please Provide a Valid Review</div>
         </div>
-        <button class="btn btn-sm btn-success offset-10 mb-1">Submit</button>
+        
       </form>
+      <% } %> 
     </div>
   </div>
 </div>
@@ -64,13 +83,10 @@
       <div class="card">
         <div class="card-body">
           <p>Rating: <%= review.rating %></p>
-          <p>Review: <%= review.body %></p>
-          <form
-            action="/restaurants/<%=restaurant._id%>/reviews/<%=review._id%>?_method=DELETE"
-            method="POST"
-          >
-            <button class="btn btn-danger btn-sm">Delete</button>
-          </form>
+          <p>Review: <%= review.body %></p> 
+          <form action="/restaurants/<%restaurant._id%>/reviews/<%review._id%>?_method=DELETE" method="POST" novalidate
+            class="needs-validation">
+          <button class="btn btn-sm btn-danger">Delete</button></form>
         </div>
       </div>
       <% } %>

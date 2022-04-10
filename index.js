@@ -29,6 +29,9 @@ app.set("views", path.join(__dirname, "views"));
 //app engine using ejs-mate
 app.engine("ejs", ejsMate);
 
+//icon setup
+app.use(express.static(path.join(__dirname, "assets")));
+
 //set up parser for forms
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
@@ -62,6 +65,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   next();

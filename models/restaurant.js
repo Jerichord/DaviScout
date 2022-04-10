@@ -3,6 +3,10 @@ const Review = require("./review");
 const { Schema } = mongoose;
 
 const RestaurantSchema = new Schema({
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   name: {
     type: String,
     required: true,

@@ -4,22 +4,8 @@ const AsyncCatcher = require("../utilities/AsyncCatcher");
 const ExpressError = require("../utilities/ExpressError");
 const Restaurant = require("../models/restaurant");
 
-const { restaurantSchema } = require("../joiSchemas.js");
-
-const { isLoggedIn } = require("../middleware");
-
-const { validateRestaurant } = require("../middleware");
+const { isLoggedIn, isAuthor, validateRestaurant } = require("../middleware");
 const req = require("express/lib/request");
-
-// const validateRestaurant = (req, res, next) => {
-//   const { error } = restaurantSchema.validate(req.body);
-//   if (error) {
-//     const msg = error.details.map((el) => el.message).join(",");
-//     throw new ExpressError(msg, 400);
-//   } else {
-//     next();
-//   }
-// };
 
 router.get(
   "/",
@@ -36,9 +22,9 @@ router.get("/new", isLoggedIn, (req, res) => {
 router.get(
   "/:id",
   AsyncCatcher(async (req, res) => {
-    const restaurant = await Restaurant.findById(req.params.id).populate(
-      "reviews"
-    );
+    const restaurant = await Restaurant.findById(req.params.id)
+      .populate("reviews")
+      .populate("author");
     if (!restaurant) {
       req.flash("error", "Sorry, cannot find that restaurant!");
       return res.redirect("/restaurants");
@@ -50,8 +36,10 @@ router.get(
 router.get(
   "/:id/edit",
   isLoggedIn,
+  isAuthor,
   AsyncCatcher(async (req, res) => {
-    const restaurant = await Restaurant.findById(req.params.id);
+    const { id } = req.params;
+    const restaurant = await Restaurant.findById(id);
     if (!restaurant) {
       req.flash("error", "Sorry, cannot find that restaurant!");
       return res.redirect("/restaurants");
@@ -60,12 +48,6 @@ router.get(
   })
 );
 
-router.get("/logout", (re1, res) => {
-  req.logout();
-  req.flash("success", "Successfully logged out.");
-  res.redirect("/restaurants");
-});
-
 router.post(
   "/",
   isLoggedIn,
@@ -73,6 +55,7 @@ router.post(
   AsyncCatcher(async (req, res, next) => {
     if (!req.body.restaurant) throw new ExpressError("Invalid Restaurant", 400);
     const restaurant = new Restaurant(req.body.restaurant);
+    restaurant.author = req.user._id;
     await restaurant.save();
     req.flash("success", "successfully made a restaurant!");
     res.redirect(`/restaurants/${restaurant._id}`);
@@ -83,6 +66,7 @@ router.put(
   "/:id",
   isLoggedIn,
   validateRestaurant,
+  isAuthor,
   AsyncCatcher(async (req, res) => {
     const { id } = req.params;
     const restaurant = await Restaurant.findByIdAndUpdate(id, {
@@ -96,8 +80,10 @@ router.put(
 router.delete(
   "/:id",
   isLoggedIn,
+  isAuthor,
   AsyncCatcher(async (req, res) => {
     const { id } = req.params;
+    const restaurant = await Restaurant.findById(id);
     await Restaurant.findByIdAndDelete(id);
     req.flash("success", "Successfully deleted campground!");
     res.redirect("/restaurants");

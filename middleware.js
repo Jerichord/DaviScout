@@ -1,6 +1,6 @@
-const { restaurantSchema } = require("./joiSchemas");
-const { reviewSchema } = require("./joiSchemas.js");
+const { restaurantSchema, reviewSchema } = require("./joiSchemas");
 const Restaurant = require("./models/restaurant");
+const Review = require("./models/review");
 
 module.exports = {
   isLoggedIn: (req, res, next) => {
@@ -36,6 +36,16 @@ module.exports = {
     const { id } = req.params;
     const restaurant = await Restaurant.findById(id);
     if (!restaurant.author.equals(req.user._id)) {
+      req.flash("error", "You do not have permission to do that.");
+      return res.redirect(`/restaurants/${id}`);
+    }
+    next();
+  },
+
+  isReviewAuthor: async (req, res, next) => {
+    const { id, reviewId } = req.params;
+    const review = await Review.findById(reviewId);
+    if (!review.author.equals(req.user._id)) {
       req.flash("error", "You do not have permission to do that.");
       return res.redirect(`/restaurants/${id}`);
     }

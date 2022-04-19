@@ -11,6 +11,6 @@ module.exports.restaurantSchema = Joi.object({
 module.exports.reviewSchema = Joi.object({
   review: Joi.object({
     body: Joi.string().required(),
-    rating: Joi.number().integer().min(1).max(5).required(),
+    rating: Joi.number().integer().min(0).max(5).required(),
   }).required(),
 });

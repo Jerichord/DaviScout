@@ -1,4 +1,11 @@
-<% layout("layouts/boilerplate") -%>
+<% layout("layouts/boilerplate") -%> <% if(restaurants.length < 1) {%>
+<div class="row">
+  <div class="col-md-10"><h1>Looks Like there's nothing here yet!</h1></div>
+  <div class="col-md-2 text-right mt-2">
+    <a class="btn btn-primary" href="/restaurants/new">add restaurant</a>
+  </div>
+</div>
+<% }else{ %>
 <div class="row">
   <div class="col-md-10"><h1>Restaurants Page!</h1></div>
   <div class="col-md-2 text-right mt-2">
@@ -24,4 +31,4 @@
   </div>
 </div>
 <div class="mb-4"></div>
-<% } %>
+<% } %> <% } %>

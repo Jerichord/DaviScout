@@ -1,4 +1,9 @@
 const Restaurant = require("../models/restaurant");
+const keys = require("dotenv").config();
+const mbxGeo = require("@mapbox/mapbox-sdk/services/geocoding");
+
+const mbxTkn = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeo({ accessToken: mbxTkn });
 module.exports = {
   index: async (req, res) => {
     const restaurants = await Restaurant.find({});
@@ -36,12 +41,23 @@ module.exports = {
   },
 
   createRestaurant: async (req, res, next) => {
-    if (!req.body.restaurant) throw new ExpressError("Invalid Restaurant", 400);
-    const restaurant = new Restaurant(req.body.restaurant);
-    restaurant.author = req.user._id;
-    await restaurant.save();
-    req.flash("success", "successfully made a restaurant!");
-    res.redirect(`/restaurants/${restaurant._id}`);
+    let location = "Davis CA 95616 ";
+    location += req.body.restaurant.location;
+    console.log(location);
+    const geoData = await geocoder
+      .forwardGeocode({
+        query: location,
+        limit: 1,
+      })
+      .send();
+    console.log(geoData.body.features);
+    res.send("ok!");
+    // if (!req.body.restaurant) throw new ExpressError("Invalid Restaurant", 400);
+    // const restaurant = new Restaurant(req.body.restaurant);
+    // restaurant.author = req.user._id;
+    // await restaurant.save();
+    // req.flash("success", "successfully made a restaurant!");
+    // res.redirect(`/restaurants/${restaurant._id}`);
   },
 
   updateRestaurant: async (req, res) => {

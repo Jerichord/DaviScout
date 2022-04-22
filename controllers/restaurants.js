@@ -43,21 +43,22 @@ module.exports = {
   createRestaurant: async (req, res, next) => {
     let location = "Davis CA 95616 ";
     location += req.body.restaurant.location;
-    console.log(location);
+    // console.log(location);
     const geoData = await geocoder
       .forwardGeocode({
         query: location,
         limit: 1,
       })
       .send();
-    console.log(geoData.body.features);
-    res.send("ok!");
-    // if (!req.body.restaurant) throw new ExpressError("Invalid Restaurant", 400);
-    // const restaurant = new Restaurant(req.body.restaurant);
-    // restaurant.author = req.user._id;
-    // await restaurant.save();
-    // req.flash("success", "successfully made a restaurant!");
-    // res.redirect(`/restaurants/${restaurant._id}`);
+    // console.log(geoData.body.features);
+    // res.send("ok!");
+    const restaurant = new Restaurant(req.body.restaurant);
+    restaurant.geometry = geoData.body.features[0].geometry;
+    restaurant.author = req.user._id;
+    await restaurant.save();
+    console.log(restaurant);
+    req.flash("success", "successfully made a restaurant!");
+    res.redirect(`/restaurants/${restaurant._id}`);
   },
 
   updateRestaurant: async (req, res) => {

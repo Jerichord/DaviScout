@@ -85,7 +85,11 @@
       style="width: 30rem; height: 45vh"
     >
       <div class="card-header text-center sticky-top bg-light">Reviews</div>
-      
+      <% if (restaurant.reviews.length < 1) {%>  
+          <div class="card-body">
+            <h3 class = "card-text"> Looks Like There Are No Reviews Yet!</h3>
+          </div> 
+      <%} else  {%> 
       <% for(let review of restaurant.reviews) {%>
       <div class="card">
         <div class="card-body">
@@ -102,6 +106,7 @@
         </div>
       </div>
       <% } %>
+    <% } %> 
     </div>
   </div>
 </div>

@@ -1,6 +1,7 @@
 const { restaurantSchema, reviewSchema } = require("./joiSchemas");
 const Restaurant = require("./models/restaurant");
 const Review = require("./models/review");
+const ExpressError = require("./utilities/ExpressError");
 
 module.exports = {
   isLoggedIn: (req, res, next) => {

@@ -9,7 +9,8 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user");
-
+const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
 //routes
 const userRoutes = require("./routes/users");
 const restaurantRoutes = require("./routes/restaurants");
@@ -39,8 +40,13 @@ app.use(methodOverride("_method"));
 //static files
 app.use(express.static(path.join(__dirname, "public")));
 
+//sanitize/security
+app.use(mongoSanitize());
+// app.use(helmet({ contentSecurityPolicy: false }));
+
 //sessions for statefulness
 const sessionConfig = {
+  name: "seshion",
   secret: "zheshisecret",
   resave: false,
   saveUninitialized: true,

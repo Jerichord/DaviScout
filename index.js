@@ -10,15 +10,19 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user");
 const mongoSanitize = require("express-mongo-sanitize");
-const helmet = require("helmet");
 //routes
 const userRoutes = require("./routes/users");
 const restaurantRoutes = require("./routes/restaurants");
 const reviewRoutes = require("./routes/reviews");
 
+// DB stuff
+const dbURL = process.env.DB_URL;
+// old: "mongodb://localhost:27017/restaurants"
+const MongoStore = require("connect-mongo");
+
 //connecting to database. You should have a database running locally using mongo called restaurants
 const connectDB = async () => {
-  await mongoose.connect("mongodb://localhost:27017/restaurants");
+  await mongoose.connect(dbURL);
   console.log("connected");
 };
 
@@ -44,10 +48,21 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(mongoSanitize());
 // app.use(helmet({ contentSecurityPolicy: false }));
 
+const secret = process.env.SECRET || "zheshisecret";
+const store = new MongoStore({
+  mongoUrl: dbURL,
+  secret,
+  touchAfter: 24 * 60 * 60,
+});
+
+store.on("Error", function (e) {
+  console.log("Session Store Error", e);
+});
 //sessions for statefulness
 const sessionConfig = {
+  store,
   name: "seshion",
-  secret: "zheshisecret",
+  secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -91,7 +106,7 @@ app.all("*", (req, res, next) => {
   next(new Error("Page Not Found", 404));
 });
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = "Oops! Something Went Wrong.";
   res.status(statusCode).render("error", { err });

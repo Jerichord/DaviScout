@@ -8,13 +8,15 @@ Specifically, this app includes
 - Responsive pages using Bootstrap
 - Basic authorization and authentication using Passport
 
-
-## Demo
-The rest will be filled out as the application is complete
 ## Deployment
+
+- Deployed using heroku
 
 ## Getting Started
 
+- Go to the restaurants page in order to see the restaurants
+- Register and Login in order to be able to leave a review
+- In order for the map to correctly display the location in Davis, you must add a location that is in Davis, without a zip code or state. Any other location will give a weird location, as the API logic is set to append Davis, CA 95616 to the end of the address
 
 
 
